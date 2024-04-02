@@ -1,0 +1,2178 @@
+\documentclass[letterpaper,12pt]{article}
+
+% \usepackage[dvips]{graphicx, color}
+\usepackage{times}
+\usepackage{graphicx,color}
+%\usepackage{framed}
+\usepackage{amsmath,amssymb,verbatim}
+%\usepackage{listings}
+\usepackage{ulem}
+\usepackage{hyperref}
+\usepackage{multirow}
+%\usepackage[T1]{fontenc}
+\usepackage{hhline}
+\usepackage{makecell}
+\usepackage{xspace}
+\usepackage{url}
+
+\setlength{\hoffset}{0in}
+\setlength{\voffset}{0in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9in}
+\setlength{\marginparsep}{0pt}
+\setlength{\marginparwidth}{0pt}
+\setlength{\parskip}{9pt}
+\setlength{\parindent}{0pt}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\sysname}{{\sf\small ECPipe}\xspace}
+\renewcommand{\ttdefault}{cmtt}
+
+\title{{\bf ECPipe User Guide}}
+\author{ADSLab @ CUHK}
+\date{Release: July 2019\\}
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% introduction
+\section{Installation}
+\label{sec:installation}
+
+\subsection{System Requirement}
+
+%We have tested \sysname on Ubuntu 14.04 LTS.
+We have tested \sysname on Ubuntu 16.04 LTS.
+
+
+\subsection{Software Requirement}
+
+Some of the packages can be downloaded from the project website\\
+{\bf http://adslab.cse.cuhk.edu.hk/software/ecpipe}.
+%
+\begin{itemize}
+
+%\item g++ v4.8.4
+\item g++ v5.4.0
+
+We need a C++ compiler that supports the C++11 standard.
+%
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo apt-get install g++}
+    }%
+}
+\end{center}
+
+\item Redis v3.2.8
+
+Download {\bf redis-3.2.8.tar.gz} and install it.
+%
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+%    \$ {\tt wget http://adslab.cse.cuhk.edu.hk/software/ecpipe/ $\backslash$
+%         > redis-3.2.8.tar.gz}
+
+    \$ {\tt tar -zxvf redis-3.2.8.tar.gz}
+
+    \$ {\tt cd redis-3.2.8}
+
+    \$ {\tt make}
+
+    \$ {\tt sudo make install}
+    }%
+}
+\end{center}
+
+Install redis as a background daemon. You can just use the default settings.
+%
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cd utils} \\
+    \$ {\tt sudo ./install\_server.sh}
+    }%
+}
+\end{center}
+
+Configure redis to be remotely accessible.
+%
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    %\$ {\tt sudo /etc/init.d/redis\_6379.sh stop}
+    \$ {\tt sudo /etc/init.d/redis\_6379 stop}
+    }%
+}
+\end{center}
+
+Edit {\sl /etc/redis/6379.conf}. Find the line with {\em bind 127.0.0.0}
+and modify it to {\em bind 0.0.0.0}, then start redis.
+
+%
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    %\$ {\tt sudo /etc/init.d/redis\_6379.sh start}
+    \$ {\tt sudo /etc/init.d/redis\_6379 start}
+    }%
+}
+\end{center}
+
+\item hiredis
+
+Download {\bf hiredis.tar.gz} and install it.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+%    \$ {\tt wget http://adslab.cse.cuhk.edu.hk/software/ecpipe/ $\backslash$
+
+%         > hiredis.tar.gz}
+
+    \$ {\tt tar -zxvf hiredis.tar.gz}
+
+    \$ {\tt cd hiredis}
+
+    \$ {\tt make}
+
+    \$ {\tt sudo make install}
+    }%
+}
+\end{center}
+
+\item gf-complete
+
+Download {\bf gf-complete.tar.gz} and install it (note that you may need to
+install {\sf autoconf} and {\sf libtool} first).
+%
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+%    \$ {\tt wget http://adslab.cse.cuhk.edu.hk/software/ecpipe/ $\backslash$
+
+%         > gf-complete.tar.gz}
+
+    \$ {\tt tar -zxvf gf-complete.tar.gz}
+
+    \$ {\tt cd gf-complete}
+
+    \$ {\tt ./autogen.sh}
+
+    \$ {\tt ./configure}
+
+    \$ {\tt make}
+
+    \$ {\tt sudo make install}
+    }%
+}
+\end{center}
+
+\end{itemize}
+
+\subsection{Compile ECPipe}
+
+%Download {\bf ECPipe-1.0.tar.gz} and compile the source code.
+Download {\bf ecpipe-v1.1.tar.gz} and compile the source code.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+%    \$ {\tt cd $\sim$}
+
+%    \$ {\tt wget http://adslab.cse.cuhk.edu.hk/software/ecpipe/ $\backslash$
+
+%         > ECPipe-1.0.tar.gz }
+
+    %\$ {\tt tar -zxvf ECPipe-1.0.tar.gz}
+    \$ {\tt tar -zxvf ecpipe-1.1.tar.gz}
+
+    \$ {\tt cd ecpipe-v1.1 }
+
+    \$ {\tt make}
+    }%
+}
+\end{center}
+
+In the following, we use \path{~ecpipe/} to refer to the {\tt ecpipe-v1.1/}
+directory or the working directory where ECPipe is installed.
+
+\section{Standalone Test of ECPipe}
+
+We can test \sysname as a standalone system without being integrated to any
+existing distributed file system.  To demonstrate how \sysname works, we
+consider an example in which there is a cluster of five nodes.  One node is
+the coordinator, and the other four nodes are helpers (clearly, you can have
+any number of helpers).  We assume that \sysname is installed and properly configured in
+all these five nodes.  Table~\ref{tab:cluster} shows the information of the
+example cluster.
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+{\bf Hostname} & {\bf IP address} & {\bf Role} \\
+\hline
+node1 & 192.168.0.1 & coordinator \\
+\hline
+node2 & 192.168.0.2 & helper \\
+\hline
+node3 & 192.168.0.3 & helper \\
+\hline
+node4 & 192.168.0.4 & helper \\
+\hline
+node5 & 192.168.0.5 & helper \\
+\hline
+\end{tabular}
+\caption{Details of the example cluster.}
+\label{tab:cluster}
+\end{table}
+
+%Note: The source code uses {\tt agents} and {\tt packets} to represent helpers
+%and slices in the paper, respectively.
+Note: The source code uses {\tt packets} to represent slices in the paper.
+
+\subsection{Prerequisites}
+\label{subsec:pre}
+
+\subsubsection{Configuration File}
+
+We configure the settings of \sysname via the configuration file
+{\tt config.xml} in XML format.  Table~\ref{tab:config} explains the meaning
+of each property.  We provide a sample configuration file
+\path{~ecpipe/conf/config.example.xml}.  You can copy this file to
+\path{~ecpipe/conf/config.xml} for each node and modify properly.
+
+\begin{table}[!ht]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{|p{2in}|p{4.2in}|}
+\hline
+{\bf Property name} & {\bf Description} \\
+\hline
+{\tt erasure.code.k} & Parameter $k$ in erasure coding.\\
+\hline
+{\tt erasure.code.n} & Parameter $n$ in erasure coding.\\
+\hline
+{\tt rs.code.config.file} & Full path to the coding matrix file (see
+Section~\ref{subsubsec:matrix}). \\
+\hline
+{\tt packet.size} & Size of a packet (called {\em slice} in our paper) in
+units of bytes.\\
+\hline
+{\tt packet.count} & Number of packets in a block. \\
+\hline
+{\tt degraded.read.policy} &  Three repair policies supported:
+{\tt conv} (i.e., conventional repair), {\tt ppr} (i.e., the PPR approach),
+and {\tt ecpipe} (i.e., our \sysname approach).\\
+\hline
+{\tt ecpipe.policy} & The repair policy if \sysname is used, either
+{\tt basic} or {\tt cyclic}.\\
+\hline
+{\tt coordinator.address} & IP address of the coordinator (e.g., 192.168.0.1
+in our example)\\
+%\hline
+%{\tt coordinator.request. handler.thread.num} & Number of
+%request handler threads in the coordinator (default is 1)\\
+%\hline
+%{\tt coordinator.distributor. thread.num} & Number of
+%distributer threads in the coordinator (default is 1)\\
+\hline
+{\tt file.system.type} & Three types are supported: {\tt standalone},
+{\tt HDFS}, or {\tt QFS}.\\
+\hline
+{\tt stripe.store} & Full path to the directory where the stripe metadata is
+stored.\\
+\hline
+{\tt block.directory} & Full path to the directory where the coded blocks are
+stored.\\
+%\hline
+%{\tt agent.worker.thread.num} & number of worker threads\\
+\hline
+{\tt helpers.address} & A list of IP addresses of all helpers, in the form of
+{\tt zone/IP address}, where {\tt zone} denotes the zone (e.g., rack or
+data center).  For example, suppose that the helpers in our example cluster
+are all in zone {\tt default}.  Then we configure the following:
+\parbox[t]{3in}{\tt default/192.168.0.2\\
+default/192.168.0.3\\
+default/192.168.0.4\\
+default/192.168.0.5}
+\smallskip\\
+%{\tt default} is zone name, {\tt 192.168.0.2} is \\IP address of node2)} \\
+\hline
+{\tt local.ip.address} & IP address of the node itself (e.g.,
+{\tt 192.168.0.1} for node1)\\
+\hline
+{\tt path.selection.enabled} & {\tt true} if weighted path selection is
+enabled; {\tt false} otherwise.\\
+\hline
+{\tt link.weight.config.file} & Full path to the weight matrix file. \\
+\hline
+{\tt rack.aware.enable} & {\tt true} if rack awareness is enabled;
+{\tt false} otherwise. \\
+% XL: Can we delete this configuration entry?
+\hline
+\end{tabular}
+\caption{Details of the configuration file {\tt config.xml}.}
+\label{tab:config}
+\end{table}
+
+\subsubsection{Coding Matrix File}
+\label{subsubsec:matrix}
+
+The coding matrix file contains an $(n-k) \times k$ encoding matrix that
+specifies the coefficients for generating $n-k$ coded blocks from $k$ uncoded
+blocks.  For example, our example cluster uses the file
+\path{~ecpipe/conf/rsEncMat_3_4} to construct a simple coding matrix for
+$(n,k)=(4,3)$:
+\[
+\begin{bmatrix}
+1 & 1 & 1
+\end{bmatrix}.
+\]
+
+The file \path{~ecpipe/conf/rsEncMat_6_9} describes a more complicated
+coding matrix for $(n,k)=(9,6)$:
+\[
+\begin{bmatrix}
+1 &   1 &    1 &    1 &    1 &    1 \\
+1 &    225 &  151 &  172 &  82 &   200 \\
+1 &   123 &  245 &  143 &  244 &  142
+\end{bmatrix}.
+\]
+
+\subsubsection{Create Erasure-Coded Blocks}
+
+Before we start our standalone test, we first need to create a stripe of
+erasure-coded blocks. We have provided a program for the block generation
+under \path{~ecpipe/test/}.
+
+% \begin{center}
+% \noindent\fbox{%
+%     \parbox{400pt}{%
+%     \$ {\tt cd \path{~ecpipe/test}}
+%
+%     \$ {\tt make}
+%
+%     \$ {\tt ./createdata}
+%     }%
+% }
+% \end{center}
+
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cd \path{~ecpipe/test}}
+
+    \$ {\tt make}
+
+    \$ {\tt dd if=/dev/urandom of=input.txt bs=1M count=3}
+
+    \$ {\tt ./createdata \path{../conf/rsEncMat_3_4} \path{./input.txt} 3 4}
+    }%
+}
+\end{center}
+
+Note: You can just run the command {\tt ./createdata} to get the usage of this program.
+
+Suppose that $(n,k)=(4,3)$.  In \path{~ecpipe/test}, we create three files of
+uncoded blocks \path{file_k1}, \path{file_k2}, and \path{file_k3}, and one
+file of coded block \path{file_m1}.
+
+We can distribute the four blocks across the four helpers, each of which
+stores one block under the path specified by {\tt block.directory}.
+
+%\begin{center}
+%\begin{tabular}{|c|c|c|}
+%\hline
+%{\bf Node} & {\bf Block Dir} & {\bf Block} \\
+%\hline
+%node1 & & \\
+%\hline
+%node2 & \$ECPipe\_Home/Stand-alone-test & file\_k1 \\
+%\hline
+%node3 & \$ECPipe\_Home/Stand-alone-test & file\_k2 \\
+%\hline
+%node4 & \$ECPipe\_Home/Stand-alone-test & file\_k3 \\
+%\hline
+%node5 & \$ECPipe\_Home/Stand-alone-test & file\_m1 \\
+%\hline
+%\end{tabular}
+%\end{center}
+%
+
+The coordinator also stores the stripe metadata under the path specified by
+{\tt stripe.store}.  In our example, the coordinator has four files:
+\path{rs:file_k1_1001}, \path{rs:file_k2_1001}, \path{rs:file_k3_1001}, and
+\path{rs:file_m1_1002}, all of which have the following content:
+\begin{center}
+{\tt file\_m1\_1002:file\_k1\_1001:file\_k2\_1001:file\_k3\_1001}
+\end{center}
+
+% \begin{center}
+% \noindent\fbox{%
+%     \parbox{400pt}{%
+%     \$ {\tt cd ECPipe}
+%
+%     \$ {\tt mkdir stripeStore}
+%     }%
+% }
+% \end{center}
+%We can create 4 files under this directory on coordinator:
+
+%\begin{center}
+%\begin{tabular}{|c|c|}
+%\hline
+%{\bf File Name} & {\bf File Content} \\
+%\cline{1-2}
+%rs:file\_k1\_1001 & \multirow{3}*{\makecell[l]{file\_m1\_1002:file\_k1\_1001:file\_k2\_1001:file\_k3\_1001}} \\
+%\cline{1-1}
+%rs:file\_k2\_1001 & \\
+%\cline{1-1}
+%rs:file\_k3\_1001 & \\
+%\cline{1-1}
+%rs:file\_m1\_1002 & \\
+%\cline{1-2}
+%\end{tabular}
+%\end{center}
+
+The file name \path{rs:file_k1_1001} means that the block uses Reed-Solomon
+(RS) codes and the block name is \path{file_k1}.  The tail 1001 (resp. 1002)
+means the block is an uncoded block (resp. coded block).
+
+%And those blocks support the following relationship.
+%\[
+%\begin{bmatrix}
+%1 & 1 & 1
+%\end{bmatrix}
+%\times
+%\begin{bmatrix}
+%file\_k1 \\
+%file\_k2 \\
+%file\_k3
+%\end{bmatrix}
+%=
+%\begin{bmatrix}
+%file\_m1
+%\end{bmatrix}
+%\]
+
+\subsection{Start ECPipe}
+
+The start script is in \path{~ecpipe/scripts/}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt python scripts/start.py}
+    }%
+}
+\end{center}
+
+\subsection{Degraded Read Test}
+
+Use ssh to connect to any one of the helpers (not the coordinator) to delete the block on it.
+Then issue degraded read test on that helper.
+For example, we can issue a degraded read at the helper that stores
+\path{file_k1}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt ./ECPipeClient file\_k1}
+    }%
+}
+\end{center}
+
+This command repairs \path{file_k1} from other helpers (i.e., through a degraded
+read).  You can measure the time for the degraded read.  The output file is
+\path{testfileOut}, which should be identical to the original block
+\path{file_k1}.
+
+\subsection{Stop ECPipe}
+
+The stop script is in \path{~ecpipe/script}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt python scripts/stop.py}
+    }%
+}
+\end{center}
+
+%\subsection{Other Techniques}
+%
+%The default technique is
+%
+%\begin{center}
+%\begin{tabular}{|c|c|}
+%\hline
+%{\bf Property Name} & {\bf Property Value} \\
+%\hline
+%{\tt degraded.read.policy} & ecpipe \\
+%\hline
+%{\tt ecpipe.policy} & basic \\
+%\hline
+%\end{tabular}
+%\end{center}
+%
+%You can try {\tt ecpipe} with {\tt cyclic}
+%\begin{center}
+%\begin{tabular}{|c|c|}
+%\hline
+%{\bf Property Name} & {\bf Property Value} \\
+%\hline
+%{\tt degraded.read.policy} & ecpipe \\
+%\hline
+%{\tt ecpipe.policy} & cyclic \\
+%\hline
+%\end{tabular}
+%\end{center}
+%
+%Or {\tt conv}, {\tt ppr}
+%
+%\begin{center}
+%\begin{tabular}{|c|c|}
+%\hline
+%{\bf Property Name} & {\bf Property Value} \\
+%\hline
+%{\tt degraded.read.policy} & conv \\
+%\hline
+%{\tt ecpipe.policy} & basic \\
+%\hline
+%\end{tabular}
+%\end{center}
+%
+%
+%\begin{center}
+%\begin{tabular}{|c|c|}
+%\hline
+%{\bf Property Name} & {\bf Property Value} \\
+%\hline
+%{\tt degraded.read.policy} & ppr \\
+%\hline
+%{\tt ecpipe.policy} & basic \\
+%\hline
+%\end{tabular}
+%\end{center}
+%
+%Please note that {\tt ecpipe.policy} is only applicable when
+%{\tt degraded.read.policy} = {\tt ecpipe}. So just let it
+%as {\tt basic} when you choose {\tt degraded.read.policy}
+%to be {\tt conv} or {\tt ppr}.
+
+\subsection{Weighted Path Selection}
+
+\sysname supports weighted path selection by setting
+{\tt path.selection.enabled} to be {\tt true} and specifying the weight matrix
+file through {\tt link.weight.config.file}.  Note that we currently only
+support {\tt degraded.read.policy} = {\tt ecpipe} and {\tt ecpipe.policy} =
+{\tt basic}.
+
+% The weight matrix file contains an $n \times n$ matrix, where $n$ is the total
+% number of blocks in a stripe.  Let $W$ denote the matrix. The element
+% $W[i][j]$ denotes the link weight from the $i$-th helper to the $j$-th helper.
+% Note that $W[i][j]$ may be different from $W[j][i]$.  We provided an sample
+% weight matrix file \path{~ecpipe/conf/linkWeightMat} for $n=4$.
+
+
+The weight matrix file contains an $N \times N$ matrix, where $N$ is the total
+number of helpers in ECPipe cluster (e.g., $N=4$ in our example).  Let $W$ denote the matrix. The element
+$W[i][j]$ denotes the link weight from the $i$-th helper to the $j$-th helper.
+Note that $W[i][j]$ may be different from $W[j][i]$.  We provided an sample
+weight matrix file \path{~ecpipe/conf/linkWeightMat} for $N=4$.
+
+%\[
+%\begin{bmatrix}
+%1.1 &  1.5  &  1.1 &  1.5 \\
+%1.2 &  1.6  &  1.2 &  1.6 \\
+%1.3 &  1.7  &  1.3 &  1.7 \\
+%1.4 &  1.8  &  1.4 &  1.8 \\
+%\end{bmatrix}
+%\]
+
+In deployment, you can first measure the network performance between every
+pair of helpers and configure the values of the matrix.
+
+\subsection{Multiple Failure Repair}
+
+\sysname supports recovery for multiple failures in a stripe. we first need to configure erasure code
+that tolerates multiple failures (e.g. $k = 6$, and $n = 9$) in \sysname configuration
+file as well as correspoding coding matrix.
+We then prepare a stripe of blocks running the program {\tt createdata} and
+distribute each block to a distinct node. Finally, we prepare corresponding metadata
+files under our stripe store. Please refer to section~\ref{subsec:pre} for configuration details. 
+We then run {\tt ECPipeClient} to issue request
+for multiple failure recovery. For example, the following command requests to
+repair the two lost block {\tt file\_k1} and {\tt file\_k2}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt ./ECPipeClient file\_k1 file\_k2}
+    }%
+}
+\end{center}
+
+After the recovery, we can find {\tt testfileOut} in two helpers, which
+represent the two repaired blocks, respectively.
+
+
+\subsection{Rack-aware Repair}
+
+\sysname provides rack-aware scheme for hierarchical network architecture. We
+configure the hierarchical network information in \sysname configuration file.
+
+\begin{itemize}
+  \item Set {\tt helper.address} with rack-awareness.
+
+  e.g.:
+  \parbox[t]{3in}{\tt 1/192.168.0.2\\
+  1/192.168.0.3\\
+  2/192.168.0.4\\
+  2/192.168.0.5}
+  \smallskip\\
+
+  \item Set {\tt rack.aware.enable} to {\tt true}.
+
+\end{itemize}
+
+Then we can run \sysname and test degraded read with rack-aware scheme.
+
+\section{Hadoop-20 Integration}
+
+In this section, we explain how we integrate \sysname into Hadoop-20.
+
+\subsection{Prerequisites}
+
+The following packages need to be first installed.
+
+\begin{itemize}
+
+\item ant
+
+Download {\bf apache-ant-1.9.9-bin.tar.gz}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt tar -zxvf apache-ant-1.9.9.-bin.tar.gz}
+    }%
+}
+\end{center}
+
+Set the environment variables {\tt ANT\_HOME} and {\tt PATH} (you may need to
+set {\tt ANT\_OPTS} if you are behind a proxy.)
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+%     \$ {\tt vim .bashrc}
+
+    {\tt export ANT\_HOME=\path{~/apache-ant-1.9.9}}
+
+    {\tt export PATH=\$PATH:\$ANT\_HOME/bin}
+
+%    \$ {\tt source .bashrc}
+    }%
+}
+\end{center}
+
+%\noindent\fbox{%
+%    \parbox{400pt}{%
+%    \$ {\tt source \path{~/.bashrc}}
+%    }%
+%}
+
+
+\item java8
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo add-apt-repository ppa:webupd8team/java}
+
+    \$ {\tt sudo apt-get update}
+
+    \$ {\tt sudo apt-get install oracle-java8-installer}
+
+    \$ {\tt sudo apt-get install oracle-java8-set-default}
+    }%
+}
+\end{center}
+
+Set the environment variable {\tt JAVA\_HOME}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    {\tt export JAVA\_HOME=/usr/lib/jvm/java-8-oracle}
+
+%    \$ {\tt source .bashrc}
+    }%
+}
+\end{center}
+
+%\noindent\fbox{%
+%    \parbox{400pt}{%
+%    \$ {\tt source \path{~/.bashrc}}
+
+%    }%
+%}
+
+\item zlib
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo apt-get install zlib1g-dev}
+    }%
+}
+\end{center}
+
+\end{itemize}
+
+\subsection{Install Hadoop-20}
+
+Download {\bf hadoop-20.tar.gz} (we provided a copy on our project website).
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt tar -zxvf hadoop-20.tar.gz}
+    }%
+}
+\end{center}
+
+We use \path{~hadoop-20} to refer to the directory where Hadoop-20 is
+installed.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    {\tt export PATH=\$PATH:\path{~hadoop-20}/bin}
+	}%
+}
+\end{center}
+
+%\noindent\fbox{%
+%    \parbox{400pt}{%
+%    \$ {\tt source \path{~/.bashrc}}
+%    }%
+%}
+
+
+Edit \path{~ecpipe/hadoop-20-integrate/install.sh} with the proper directory
+names \path{~ecpipe} and \path{~hadoop-20}.  Then execute the script.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt ./install.sh}
+    }%
+}
+\end{center}
+
+\subsection{Cluster Setting}
+
+To demonstrate how ECPipe works with hadoop-20, we consider an example in
+which there is a cluster of six nodes.  We assume that \sysname has been
+installed in all these 6 nodes.  Hadoop-20 has been installed in all helper
+nodes.
+
+\begin{center}
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    {\bf Node} & {\bf IP} & {\bf Hadoop-20 Node Type} & {\bf ECPipe Node Type} \\
+    \hline
+    node1 & 192.168.0.1 & not applicable &  coordinator \\
+    \hline
+    node2 & 192.168.0.2 & NameNode, RaidNode &  helper \\
+    \hline
+    node3 & 192.168.0.3 & DataNode & helper \\
+    \hline
+    node4 & 192.168.0.4 & DataNode & helper \\
+    \hline
+    node5 & 192.168.0.5 & DataNode & helper \\
+    \hline
+    node6 & 192.168.0.6 & DataNode & helper \\
+    \hline
+    \end{tabular}
+\end{center}
+
+Note: Make sure that the NameNode can ssh to any DataNode via public key
+authentication without password.  The public/private keys can be set up via
+{\tt ssh-keygen}.
+
+\subsection{Hadoop-20 Configuration}
+
+Hadoop configuration files are in XML format.  We provide sample configuration
+files in \path{~ecpipe/hadoop-20-integrate/conf}.  You can copy them to
+\path{~hadoop-20/conf}.
+
+\begin{itemize}
+
+\item hadoop-env.sh
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+{\bf Property name} & {\bf Description} \\
+\hline
+{\tt JAVA\_HOME} & Your JAVA\_HOME \\
+\hline
+{\tt HADOOP\_USERNAME} & Your linux user name \\
+\hline
+\end{tabular}
+\end{center}
+
+\item core-site.sh
+
+\begin{center}
+\begin{tabular}{|p{2.5in}|p{3in}|}
+\hline
+{\bf Property Name} & {\bf Description} \\
+\hline
+{\tt fs.default.name}  & IP address and port number \\
+		& (e.g., {\tt hdfs://192.168.0.2:9000}) \\
+\hline
+{\tt topology.script.file.name} & Full path to rackAware.sh\\
+\hline
+{\tt hadoop.tmp.dir} & Full path to the hadoop-20 data directory \\
+\hline
+\end{tabular}
+\end{center}
+
+\item hdfs-site.xml
+
+We only highlight the important properties that are related to our work, as
+listed in Table~\ref{tab:hdfssite}.  For other properties, you may follow the
+default settings.
+
+%\begin{center}
+% \begin{tabular}{|l|l|l|}
+% \hline
+% {\bf Property Name} & {\bf Default Value} & {\bf Description} \\
+% \hline
+% {\tt ecpipe.coordinator} & 192.168.0.1 & \\
+% \hline
+% {\tt ecpipe.packetsize} & 32768 & \\
+% \hline
+% {\tt ecpipe.packetcnt} & 32 & \\
+% \hline
+% {\tt ecpipe.local.addr} & & IP address of the node itself \\
+% \hline
+% {\tt \makecell[l]{dfs.use.inline.\\checksum}} & {false} & \makecell[l]{should be {\tt false} for ECPipe}\\
+% \hline
+% {\tt use.ecpipe} & {\tt true} & {\tt false} for default method\\
+% \hline
+% {\tt num.src.node} & 3 & \makecell[l]{no less than $k$}\\
+% \hline
+% {\tt num.parity.node} & 1 & \makecell[l]{no less than $n-k$ \\ {\tt num.src.node} + {\tt num.parity.node} \\ $\leq$ number of DataNodes} \\
+% \hline
+% {\tt dfs.http.address} & 192.168.0.2:50070 & \makecell[l]{NameNode web UI listens on \\this port}\\
+% \hline
+% {\tt dfs.replication} & 1 & source block has 1 replication\\
+% \hline
+% {\tt \makecell[l]{hdfs.raid.parity.\\initial.repl}} & 1 & parity block has 1 replication\\
+% \hline
+% {\tt \makecell[l]{raid.blockfix.\\classname}} & \makecell[l]{org.apache.hadoop.raid.\\LocalBlockIntegrityMonitor} & block fixer implementaion \\
+% \hline
+% {\tt raid.config.file} & \makecell[l]{/home/username/hadoop-20/\\conf/raid.xml} & \makecell[l]{full path to raid configuration file}\\
+% \hline
+% {\tt \makecell[l]{hdfs.raid.stripe.\\store.class}} & \makecell[l]{org.apache.hadoop.\\raid.LocalStripeStore} & stripe store implementation\\
+% \hline
+% {\tt \makecell[l]{hdfs.raid.local.\\stripe.dir}} & \makecell[l]{/home/username/hadoop-20/\\stripeStore}& \makecell[l]{full path to your stripe store\\ directory}\\
+% \hline
+% {\tt raid.classname} & \makecell[l]{org.apache.hadoop.\\raid.LocalRaidNode} & RaidNode implementation\\
+% \hline
+% {\tt \makecell[l]{dfs.block.replicator.\\classname}} & \makecell[l]{org.apache.hadoop.\\hdfs.server.namenode.\\BlockPlacementPolicyCtdr} & placement policy implementation\\
+% \hline
+% {\tt dfs.block.size} & 1048576 & block size\\
+% \hline
+% \end{tabular}
+%\end{center}
+
+\begin{table}[!ht]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{|p{2.5in}|p{3in}|}
+\hline
+{\bf Property Name} & {\bf Description} \\
+\hline
+{\tt ecpipe.coordinator} & IP address of the coordinator (e.g., 192.168.0.1 in
+our case).  \\
+\hline
+{\tt ecpipe.packetsize} & The slice size in our paper (e.g. {\tt 32768} in our example).  \\
+\hline
+{\tt ecpipe.packetcnt} & The number of slices (e.g. {\tt 32} in our example). \\
+\hline
+{\tt ecpipe.local.addr} & IP address of the node itself. \\
+\hline
+{\tt dfs.use.inline.checksum} & Assumed to be {\tt false}.\\
+\hline
+{\tt use.ecpipe} & Set to {\tt true} to enable \sysname.\\
+\hline
+{\tt num.src.node} & Parameter $k$ in erasure coding.\\
+\hline
+{\tt num.parity.node} & Parameter $n-k$ in erasure coding.\\
+\hline
+{\tt dfs.http.address} & Address to which NameNode web UI listens
+(e.g. {\tt 192.168.0.2:50070}).\\
+\hline
+{\tt dfs.replication} & Replication parameter for uncoded blocks.\\
+\hline
+{\tt hdfs.raid.parity.initial.repl} & Replication parameter for coded blocks.\\
+% \hline
+% {\tt \makecell[l]{raid.blockfix.\\classname}} & block fixer implementaion \\
+\hline
+{\tt raid.config.file} & Full path to the RAID configuration file.\\
+% \hline
+% {\tt \makecell[l]{hdfs.raid.stripe.\\store.class}} & stripe store implementation\\
+\hline
+{\tt hdfs.raid.local.stripe.dir} & Full path to the stripe store directory.\\
+% \hline
+% {\tt raid.classname}  & RaidNode implementation\\
+% \hline
+% {\tt \makecell[l]{dfs.block.replicator.\\classname}}  & placement policy implementation\\
+\hline
+{\tt dfs.block.size} & HDFS block size (in bytes).\\
+\hline
+{\tt raid.codecs.json} & It is in JSON format. See Table~\ref{tab:raidcodecs}.\\
+\hline
+\end{tabular}
+\caption{Details of hdfs-site.xml.}
+\label{tab:hdfssite}
+\end{table}
+
+Table~\ref{tab:raidcodecs} shows the properties of {\tt raid.codecs.json}.
+
+% \begin{center}
+% \begin{tabular}{|l|c|l|}
+% \hline
+% {\bf Property Name} & {\bf Default Value } & {\bf Description} \\
+% \hline
+% {\tt id} & rs &  coding scheme you use \\
+% \hline
+% {\tt parity\_dir} & /rs & parity directory \\
+% \hline
+% {\tt stripe\_length} & 3 & number of source blocks in a stripe \\
+% \hline
+% {\tt parity\_length} & 1 & number of parity blocks in a stripe \\
+% \hline
+% {\tt priority} & 100 & priority of this coding scheme \\
+% \hline
+% {\tt erasure\_code} &\makecell[l]{org.apache.hadoop.\\raid.JerasureCode} & erasure coding implementation \\
+% \hline
+% {\tt dir\_raid} & true &erasure coding for directory \\
+% \hline
+% \end{tabular}
+% \end{center}
+
+\begin{table}[!ht]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{|p{2in}|p{3.5in}|}
+\hline
+{\bf Object Name} & {\bf Description} \\
+\hline
+{\tt id} & Identifier of the coding scheme. \\
+\hline
+{\tt parity\_dir} & Parity directory (e.g., {\tt /parity}).\\
+\hline
+{\tt stripe\_length} & Parameter $k$ in erasure coding. \\
+\hline
+{\tt parity\_length} & Parameter $n-k$ in erasure coding. \\
+\hline
+{\tt erasure\_code} & Class name of the erasure code implementation (see the
+sample XML file for configuration). \\
+\hline
+{\tt dir\_raid} & Set it to {\tt true} for directory raid.\\
+\hline
+\end{tabular}
+\caption{Details of raid.codecs.json.}
+\label{tab:raidcodecs}
+\end{table}
+
+\item raid.xml
+
+The default {\tt srcPath} is
+{\tt hdfs://192.168.0.2:9000/user/username/raidTest}.  Set the proper
+{\tt srcPath} according to your configuration.
+
+\item masters
+
+This file contains one line with your NameNode IP address.
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    {\tt 192.168.0.2}
+    }%
+}
+\end{center}
+
+\item slaves
+
+This file contains multiple lines, each of which is a DataNode IP address.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    {\tt 192.168.0.3}
+
+    {\tt 192.168.0.4}
+
+    {\tt 192.168.0.5}
+
+    {\tt 192.168.0.6}
+    }%
+}
+\end{center}
+
+\end{itemize}
+
+\subsection{Start Hadoop-20}
+
+\begin{itemize}
+
+\item Format the Hadoop cluster.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt hadoop namenode -format}
+    }%
+}
+
+\item Start the Hadoop cluster.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt start-dfs.sh}
+    }%
+}
+
+\item Check whether the Hadoop cluster has started correctly.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt hadoop dfsadmin -report | grep total}
+    }%
+}
+
+If the result indicates that there are 4 DataNodes, then the Hadoop cluster
+starts correctly.
+
+\item Write data into HDFS.
+
+For example, we create a file of 3MB using {\tt dd} and write it into HDFS.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cd \path{~/hadoop-20}}
+
+    \$ {\tt dd if=/dev/urandom of=file.txt bs=1048576 count=3}
+
+    \$ {\tt hadoop dfs -put file.txt raidTest/input}
+    }%
+}
+
+\item Start RaidNode for erasure coding.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt start-raidnode.sh}
+    }%
+}
+
+\item Check whether erasure-coded data is ready.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt hadoop fsck / -files -blocks -locations}
+    }%
+}
+
+We can see four blocks from the results.
+
+\item Stop RaidNode.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt stop-raidnode.sh}
+    }%
+}
+\end{itemize}
+
+\subsection{Start ECPipe}
+
+\begin{itemize}
+
+\item Identify the block directory.  For example,
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt ssh node3}
+
+    \$ {\tt find -name "finalized"}
+    }%
+}
+
+You can ssh to any DataNode to execute this command, and the result is the
+block directory.
+
+\item config.xml
+
+Please note that we only support {\tt degraded.read.policy} = {\tt ecpipe},
+and {\tt ecpipe.policy} = {\tt basic} for now.  Check
+\path{~ecpipe/conf/config.xml} to see if the following properties are properly
+set.
+
+%  \begin{tabular}{|l|l|l|}
+%    \hline
+%    {\bf Property Name} & {\bf Default Value} & {\bf Description }\\
+%    \hline
+%    {\tt file.system.type} & HDFS & \\
+%    \hline
+%    {\tt hdfs.stripe.store} &  /home/username/ECPipe/stripeStore & \\
+%    \hline
+%    {\tt hdfs.block.directory} & \makecell[l]{/home/username/hadoop-20/tmp/\\dfs/data/current/NS-765818590/\\current/finalized} & find out your block directory \\
+%    \hline
+%    {\tt helpers.address} & & 5 helpers \\
+%    \hline
+%    \end{tabular}
+
+\begin{tabular}{|l|l|}
+\hline
+{\bf Property Name} & {\bf Description }\\
+\hline
+{\tt file.system.type} & Set it to {\tt HDFS} here. \\
+\hline
+{\tt stripe.store} & Your HDFS stripe store directory. \\
+\hline
+{\tt block.directory} & Your HDFS block directory. \\
+\hline
+{\tt helpers.address} &  List of helper addresses. \\
+\hline
+\end{tabular}
+
+Other configurations are similar to what we introduced earlier.
+
+\item Start ECPipe.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cd \path{~ecpipe}}
+
+    \$ {\tt python scripts/start.py}
+    }%
+}
+\end{center}
+
+\end{itemize}
+
+\subsection{Degraded Read Test}
+
+\begin{itemize}
+\item Ssh to one of the Hadoop DataNode.
+\item Delete one block under data directory.
+\end{itemize}
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt hadoop dfs -copyToLocal raidTest/input output.txt}
+    }%
+}
+\end{center}
+
+You can compare input file {\sl file.txt} with the output file {\sl output.txt}.
+
+\subsection{Stop Hadoop-20 and ECPipe}
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt stop-dfs.sh}
+
+    \$ {\tt cd \path{~ecpipe}}
+
+    \$ {\tt python scripts/stop.py}
+    }%
+}
+\end{center}
+
+\section{Hadoop-3 Integration}
+
+In this section, we explain how we integrate \sysname into Hadoop-3.
+
+\subsection{Prerequisites}
+
+The following packages need to be first installed.
+
+\begin{itemize}
+\item maven (3.5.0 or higher)
+
+Download {\bf apache-maven-3.5.0-bin.tar.gz}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+%     \$ {\tt cd $\sim$}
+%
+%     \$ {\tt wget http://adslab.cse.cuhk.edu.hk/software/ecpipe $\backslash$
+%
+%          > apache-maven-3.5.0-bin.tar.gz}
+%
+    \$ {\tt tar -zxvf apache-maven-3.5.0-bin.tar.gz}
+    }%
+}
+\end{center}
+
+Set the environment variables {\tt M2\_HOME} and {\tt PATH}.
+
+\item isa-l 2.14.0
+
+Download {\bf isa-l-2.14.0.tar.gz}.
+
+\begin{center}
+  \noindent\fbox{
+  \parbox{400pt}{
+  \$ {\tt tar -zxvf isa-l-2.14.0.tar.gz} \\
+  \$ {\tt cd isa-l-2.14.0} \\
+  \$ {\tt ./autogen.sh; ./configure; make; sudo make install}
+  }
+  }
+\end{center}
+
+\item java8
+
+\begin{center}
+\noindent\fbox{%
+\parbox{400pt}{%
+\$ {\tt sudo add-apt-repository ppa:webupd8team/java} \\
+\$ {\tt sudo apt-get update} \\
+\$ {\tt sudo apt-get install oracle-java8-installer} \\
+\$ {\tt sudo apt-get install oracle-java8-set-default}
+}%
+}
+\end{center}
+
+Set the environment variable {\tt JAVA\_HOME}.
+
+\end{itemize}
+
+\subsection{Install Hadoop-3}
+
+Download {\bf hadoop-3.1.1-src.tar.gz} (we provide a copy on our project website).
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt tar -zxvf hadoop-3.1.1-src.tar.gz}
+    }%
+}
+\end{center}
+
+We use \path{~hadoop-3} to refer to the directory where Hadoop-3 is
+installed.
+
+\begin{center}
+\noindent\fbox{%
+\parbox{420pt}{%
+{\tt export HADOOP\_SRC\_DIR=\path{~hadoop-3}} \\
+{\tt export HADOOP\_HOME=\${HADOOP\_SRC\_DIR}/hadoop-dist/target/hadoop-3.1.1} \\
+{\tt export PATH=\${HADOOP\_HOME}/bin:\${HADOOP\_HOME}/sbin:\${PATH}} \\
+{\tt export HADOOP\_CLASSPATH=\${JAVA\_HOME}/lib/tools.jar:\${HADOOP\_CLASSPATH}} \\
+{\tt export CLASSPATH=\$JAVA\_HOME/lib:\$CLASSPATH} \\
+{\tt export LD\_LIBRARY\_PATH=\$HADOOP\_HOME/lib/native:\${JAVA\_HOME}/jre/lib/\\amd64/server/:/usr/local/lib:\$LD\_LIBRARY\_PATH}
+}%
+}
+\end{center}
+
+Edit \path{~hadoop-3/hadoop-3-integrate/install.sh} with the proper directory names
+\path{~hadoop-3}. Then execute the script.
+
+\begin{center}
+\noindent\fbox{%
+\parbox{420pt}{%
+{\tt ./install.sh}
+}%
+}
+\end{center}
+
+\subsection{Cluster Setting}
+
+To demonstrate how ECPipe works with hadoop-3, we consider an example in which
+there is a cluster of 6 nodes.
+
+\begin{center}
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    {\bf Node} & {\bf IP} & {\bf Hadoop-3 Node Type} & {\bf ECPipe Node Type} \\
+    \hline
+    node1 & 192.168.0.1 & HDFS Client &  coordinator \\
+    \hline
+    node2 & 192.168.0.2 & NameNode &  helper \\
+    \hline
+    node3 & 192.168.0.3 & DataNode & helper \\
+    \hline
+    node4 & 192.168.0.4 & DataNode & helper \\
+    \hline
+    node5 & 192.168.0.5 & DataNode & helper \\
+    \hline
+    node6 & 192.168.0.6 & DataNode & helper \\
+    \hline
+    \end{tabular}
+\end{center}
+
+Note: Make sure that the NameNode can ssh to any DataNode via public key authentication
+without password. The public/private keys can be set up via {\tt ssh-keygen}.
+
+\subsection{Hadoop-3 Configuration}
+We provide sample configuration files in \path{~ecpipe/hadoop-3-integration/conf}.
+You can copy them to \path{~hadoop-3/hadoop-dist/target/hadoop-3.1.1/etc/hadoop}.
+
+\begin{itemize}
+
+\item hadoop-env.sh
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+{\bf Property name} & {\bf Description} \\
+\hline
+{\tt JAVA\_HOME} & Your JAVA\_HOME \\
+\hline
+\end{tabular}
+\end{center}
+
+\item core-site.sh
+
+\begin{center}
+\begin{tabular}{|p{2.5in}|p{3in}|}
+\hline
+{\bf Property Name} & {\bf Description} \\
+\hline
+{\tt fs.defaultFS}  & IP address and port number \\
+		& (e.g., {\tt hdfs://192.168.0.2:9000}) \\
+\hline
+{\tt hadoop.tmp.dir} & Full path to the hadoop-3 data directory \\
+\hline
+\end{tabular}
+\end{center}
+
+\item hdfs-site.xml
+
+We only highlight the important properties that are related to our work, as
+listed in Table~\ref{tab:hdfs3site}.  For other properties, you may follow the
+default settings.
+
+\begin{table}[!ht]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{|p{2.5in}|p{3in}|}
+\hline
+{\bf Property Name} & {\bf Description} \\
+\hline
+{\tt dfs.replication} & Replication parameter for uncoded blocks.\\
+\hline
+{\tt dfs.block.size} & HDFS block size (in bytes).\\
+\hline
+{\tt ecpipe.coordinator} & IP address of the coordinator (e.g., 192.168.0.1 in
+our case).  \\
+\hline
+{\tt ecpipe.packetsize} & The slice size in our paper (e.g. {\tt 32768} in our example).  \\
+\hline
+{\tt ecpipe.packetcnt} & The number of slices (e.g. {\tt 32} in our example). \\
+\hline
+{\tt dfs.datanode.ec.ecpipe} & Set to {\tt true} to enable \sysname. \\
+\hline
+\end{tabular}
+\caption{Details of hdfs-site.xml.}
+\label{tab:hdfs3site}
+\end{table}
+
+\item user\_ec\_policies.xml
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+{\bf Property name} & {\bf Description} \\
+\hline
+{\tt schema} & Erasure code id. \\
+\hline
+{\tt codec} & Erasure code (e.g. rs). \\
+\hline
+{\tt k} & Parameter $k$ in erasure coding. \\
+\hline
+{\tt m} & Parameter $m$ in erasure coding. \\
+\hline
+{\tt cellsize} & To be consistent with packet size in \sysname. \\
+\hline
+\end{tabular}
+\end{center}
+
+We provide sample configuration for {\tt RS-3-1-32k} erasure code policy.
+
+\item workers
+
+This file contains multiple lines, each of which is a DataNode IP address.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    {\tt 192.168.0.3}
+
+    {\tt 192.168.0.4}
+
+    {\tt 192.168.0.5}
+
+    {\tt 192.168.0.6}
+    }%
+}
+\end{center}
+
+\subsection{Start Hadoop-3}
+
+\begin{itemize}
+
+\item Format the Hadoop cluster.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt hdfs namenode -format}
+    }%
+}
+
+\item Start the Hadoop-3 cluster.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt start-dfs.sh}
+    }%
+}
+
+\item Check whether the Hadoop cluster has started correctly.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt hdfs dfsadmin -report | grep Hostname}
+    }%
+}
+
+If the result indicates that there are 4 DataNodes, then the Hadoop-3 cluster
+starts correctly.
+
+\item Set erasure coding policy.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt hdfs ec -addPolicies -policyFile \path{/path/to/user_ec_policies.xml}}
+
+    \$ {\tt hdfs ec -enablePolicy -policy RS-3-1-32k}
+
+    \$ {\tt hdfs dfs -mkdir /hdfsec}
+
+    \$ {\tt hdfs ec -setPolicy -path /hdfsec -policy RS-3-1-32k}
+    }%
+}
+
+\item Write data into HDFS.
+
+For example, we create a file of 3MB using {\tt dd} and write it into HDFS.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cd \path{~hadoop-3}}
+
+    \$ {\tt dd if=/dev/urandom of=file.txt bs=1048576 count=3}
+
+    \$ {\tt hdfs dfs -put file.txt /hdfsec/testfile}
+    }%
+}
+
+\item Check whether erasure-coded data is ready.
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt hadoop fsck / -files -blocks -locations}
+    }%
+}
+
+We can see four blocks from the results.
+
+\end{itemize}
+
+\subsection{Start ECPipe}
+
+\begin{itemize}
+
+\item Identify the block directory.  For example,
+
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt ssh node3}
+
+    \$ {\tt find -name "finalized"}
+    }%
+}
+
+You can ssh to any DataNode to execute this command, and the result is the
+block directory.
+
+\item config.xml
+
+Please note that we only support {\tt degraded.read.policy} = {\tt ecpipe},
+and {\tt ecpipe.policy} = {\tt basic} for now.  Check
+\path{~ecpipe/conf/config.xml} to see if the following properties are properly
+set.
+
+\begin{tabular}{|l|l|}
+\hline
+{\bf Property Name} & {\bf Description }\\
+\hline
+{\tt file.system.type} & Set it to {\tt HDFS3} here. \\
+\hline
+{\tt block.directory} & Your HDFS block directory. \\
+\hline
+{\tt helpers.address} &  List of helper addresses. \\
+\hline
+\end{tabular}
+
+Other configurations are similar to what we introduced earlier.
+
+\item Start ECPipe.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cd \path{~ecpipe}}
+
+    \$ {\tt python scripts/start.py}
+    }%
+}
+\end{center}
+
+\end{itemize}
+
+\subsection{Recovery Test}
+
+\begin{itemize}
+\item Stop Hadoop-3
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt stop-dfs.sh}
+    }%
+}
+\end{center}
+
+\item ssh to one of the Hadoop DataNode.
+\item Delete one block under data directory.
+
+\item Start Hadoop-3.
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt start-dfs.sh}
+    }%
+}
+\end{center}
+
+\item Check repaired data.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt hdfs dfs -copyToLocal /hdfsec/testfile output.txt}
+    }%
+}
+\end{center}
+
+\end{itemize}
+You can compare input file {\sl file.txt} with the output file {\sl output.txt}.
+
+\subsection{Stop Hadoop-3 and ECPipe}
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt stop-dfs.sh}
+
+    \$ {\tt cd \path{~ecpipe}}
+
+    \$ {\tt python scripts/stop.py}
+    }%
+}
+\end{center}
+
+\end{itemize}
+
+\section{QFS Integration}
+
+\subsection{Prerequisites}
+
+\begin{itemize}
+
+\item cmake (v2.8.4 or higher)
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo apt-get install cmake}
+    }%
+}
+\end{center}
+
+\item maven (v3.0.3 or higher)
+
+Download {\bf apache-maven-3.5.0-bin.tar.gz}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+%     \$ {\tt cd $\sim$}
+%
+%     \$ {\tt wget http://adslab.cse.cuhk.edu.hk/software/ecpipe $\backslash$
+%
+%          > apache-maven-3.5.0-bin.tar.gz}
+%
+    \$ {\tt tar -zxvf apache-maven-3.5.0-bin.tar.gz}
+    }%
+}
+\end{center}
+
+Set the environment variables {\tt M2\_HOME} and {\tt PATH}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    {\tt export M2\_HOME=\path{~/apache-maven-3.5.0}}
+
+    {\tt export PATH=\$PATH:\$M2\_HOME/bin}
+    }%
+}
+\end{center}
+
+%\noindent\fbox{%
+%    \parbox{400pt}{%
+%    \$ {\tt source \path{~/.bashrc}}
+%    }%
+%}
+
+\item libboost-regex-dev 1.3.4 or higher
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo apt-get install libboost-regex-dev}
+    }%
+}
+\end{center}
+
+\item libkrb5-dev
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo apt-get install libkrb5-dev}
+    }%
+}
+\end{center}
+
+\item xfslibs-dev
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo apt-get install xfslibs-dev}
+    }%
+}
+\end{center}
+
+\item libssl-dev
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo apt-get install libssl-dev}
+    }%
+}
+\end{center}
+
+\item python-dev
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo apt-get install python-dev}
+    }%
+}
+\end{center}
+
+\item libfuse-dev
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt sudo apt-get install libfuse-dev}
+    }%
+}
+\end{center}
+
+\end{itemize}
+
+\subsection{Install QFS}
+
+Download {\bf qfs-1.1.4.tar.gz}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+%     \$ {\tt cd $\sim$}
+%
+%     \$ {\tt wget http://adslab.cse.cuhk.edu.hk/software/ecpipe $\backslash$
+%
+%          > qfs-1.1.4.tar.gz }
+%
+    \$ {\tt tar -zxvf qfs-1.1.4.tar.gz}
+    }%
+}
+\end{center}
+
+We use \path{~qfs} to refer to the directory where QFS is installed.
+
+Edit \path{~ecpipe/qfs-integrate/install.sh} with the proper directory names
+\path{~ecpipe} and \path{~qfs}.  Then execute the script.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt ./install.sh}
+    }%
+}
+\end{center}
+
+\subsection{Cluster Setting}
+
+We consider erasure coding with $(n,k)=(9,6)$ in QFS.  We configure nine
+QFS chunkservers and one QFS metaserver.
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+{\bf Node} & {\bf IP} & {\bf QFS Node Type} & {\bf ECPipe Node Type} \\
+\hline
+node1 &192.168.0.1& not applicable & coordinator \\
+\hline
+node2 &192.168.0.2& metaserver & helper \\
+\hline
+node3-node11& 192.168.0.3--11 & chunkserver & helper \\
+\hline
+\end{tabular}
+\end{center}
+
+We create the following directories for our test:
+
+\begin{itemize}
+
+\item on node2 (metaserver)
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt mkdir \path{~/qfsexe}}
+
+    \$ {\tt mkdir \path{~/qfstest}}
+
+    \$ {\tt mkdir \path{~/qfstest/conf}}
+
+    \$ {\tt mkdir \path{~/qfstest/meta}}
+
+    \$ {\tt mkdir \path{~/qfstest/meta/logs}}
+
+    \$ {\tt mkdir \path{~/qfstest/meta/checkpoints}}
+    }%
+}
+\end{center}
+
+\item on node3-node11 (chunkserver)
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt mkdir \path{~/qfsexe}}
+
+    \$ {\tt mkdir \path{~/qfstest}}
+
+    \$ {\tt mkdir \path{~/qfstest/conf}}
+
+    \$ {\tt mkdir \path{~/qfstest/qfsdata}}
+
+    \$ {\tt mkdir \path{~/qfstest/qfslogs}}
+    }%
+}
+\end{center}
+
+\end{itemize}
+
+We distribute the following executable files to \path{~/qfsexe}.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    {\sf \path{~/qfs/build/release/bin/metaserver}}
+
+    {\sf \path{~/qfs/build/release/bin/chunkserver}}
+
+    {\sf \path{~/qfs/build/release/bin/tools/cptoqfs}}
+
+    {\sf \path{~/qfs/build/release/bin/tools/cpfromqfs}}
+    }%
+}
+\end{center}
+
+We export the following environment variables.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    {\tt export QFSEXE=\path{~/qfsexe}}
+
+    {\tt export PATH=\$PATH:\$QFSEXE}
+    }%
+}
+\end{center}
+
+%\noindent\fbox{%
+%    \parbox{400pt}{%
+%    \$ {\tt source \path{~/.bashrc}}
+%    }%
+%}
+
+
+\subsection{QFS Configuration}
+
+We first configure the metaserver.  We provided a sample metaserver
+configuration file at
+\path{~ecpipe/qfs-integrate/conf/MetaServer.example.prp}.
+You can copy it to \path{~qfs/qfstest/conf/MetaServer.prp} on the
+metaserver (node2) and edit it properly.  Table~\ref{tab:qfs_meta} explains
+the details of the configuration file.
+
+% \begin{tabular}{|l|c|l|}
+% \hline
+% {\bf Property Name} & {\bf Default Value} & {\bf Description} \\
+% \hline
+% {\tt \makecell[l]{metaServer.\\clientPort}} & 20000 & \makecell[l]{metaserver use this port to \\communicate with client}\\
+% \hline
+% {\tt \makecell[l]{metaServer.\\chunkServerPort}} & 30000 & \makecell[l]{metaserver use this port to \\communicate with chunkserver} \\
+% \hline
+% {\tt \makecell[l]{metaServer.\\logDir}} & \makecell[l]{/home/username/qfstest/\\meta/logs} & \makecell[l]{full path to metaserver logs} \\
+% \hline
+% {\tt \makecell[l]{metaServer.\\cpDir}} & \makecell[l]{/home/username/qfstest/\\meta/checkpoints} & \makecell[l]{full path to checkpoints} \\
+% \hline
+% {\tt \makecell[l]{metaServer.\\createEmptyFs}} & 1 & \makecell[l]{create empty file system when \\start QFS} \\
+% \hline
+% {\tt \makecell[l]{metaServer.\\clusterKey}} & testingCluster & \makecell[l]{all nodes share the \\same clusterKey} \\
+% \hline
+% {\tt \makecell[l]{metaServer.\\msgLogWriter.\\logLevel}} & INFO & \makecell[l]{{\tt INFO} is popularly used, \\also support {\tt DEBUG}} \\
+% \hline
+% {\tt \makecell[l]{metaServer.\\rootDirUser}} & 1000 & \makecell[l]{\tt \$ id -u}\\
+% \hline
+% {\tt \makecell[l]{metaServer.\\rootDirGroup}} & 1000 & \makecell[l]{\tt \$ id -g}\\
+% \hline
+% {\tt \makecell[l]{metaServer.\\rootDirMode}} & 0777 & \\
+% \hline
+% \end{tabular}
+
+\begin{table}[!ht]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{|p{2in}|p{3.5in}|}
+\hline
+{\bf Property Name} & {\bf Description} \\
+\hline
+{\tt metaServer.clientPort} & Port number for the metaserver to communicate
+with clients (e.g., 20000).\\
+\hline
+{\tt metaServer.chunkServerPort} & Port number for the metaserver to communicate
+with chunkservers (e.g., 30000). \\
+\hline
+{\tt metaServer.logDir} & Full path to metaserver logs. (e.g.,
+\path{~qfs/qfstest/meta/logs}) \\
+\hline
+{\tt metaServer.cpDir} & Full path to checkpoints. (e.g.,
+\path{~qfs/qfstest/meta/checkpoints}) \\
+\hline
+{\tt metaServer.createEmptyFs} & Set to {\tt 1} to create an empty file system
+when QFS is started. \\
+\hline
+{\tt metaServer.clusterKey} &  The clusterKey shared by all nodes.\\
+\hline
+{\tt metaServer.msgLogWriter. logLevel} & {\tt INFO} or {\tt DEBUG}. \\
+\hline
+{\tt metaServer.rootDirUser} & The value returned by the command {\tt id -u}.\\
+\hline
+{\tt metaServer.rootDirGroup} & The value returned by the command {\tt id -g}.\\
+\hline
+{\tt metaServer.rootDirMode} & 0777.  \\
+\hline
+\end{tabular}
+\caption{Details of the QFS metaserver configuration file.}
+\label{tab:qfs_meta}
+\end{table}
+
+We next configure each chunkserver.  We provided a sample chunkserver
+configuration file at
+\path{~ecpipe/qfs-integrate/conf/ChunkServer.example.prp}.
+You can copy it to \path{~qfs/qfstest/conf/ChunkServer.prp} on all
+chunkservers (node3-node11) and edit it properly.  Table~\ref{tab:qfs_chunk}
+explains the details of the configuration file.
+
+% \begin{tabular}{|l|c|l|}
+% \hline
+% {\bf Property Name} & {\bf Default Value} & {\bf Description} \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\ECPipe.PacketSize}} & 32768 & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\ECPipe.PacketCount}} & 32 & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\metaServer.hostname}} & 192.168.0.2 & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\metaServer.port}} & 30000 & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\clientPort}} & 22000 &  \makecell[l]{chunkserver use this port to \\communicate with client} \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\clusterKey}} & testingCluster & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\chunkDir}} & \makecell[l]{/home/username/qfstest/\\qfsdata} & \makecell[l]{full path to qfsdata}\\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\msgLogWriter.\\maxLogFileSize}} & 1e6 & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\msgLogWriter.\\maxLogFiles}} & 2 & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\pidFile}} & \makecell[l]{/home/username/qfstest/\\qfslogs/chunkserver.pid} & \makecell[l]{full path to chunkserver.pid} \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\ECPipe.\\coordinatorIP}} & 192.168.0.1 & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\ECPipe.\\localIP}} &  & chunkserver IP\\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\ECPipe.\\degradedReadPolicy}} & ecpipe & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\ECPipe.\\ECPipePolicy}} & basic & Only support {\tt basic} \\
+% \hline
+% \end{tabular}
+
+\begin{table}[!ht]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{|p{2in}|p{3.5in}|}
+\hline
+{\bf Property Name} & {\bf Description} \\
+\hline
+\tt{chunkServer.ECPipe. PacketSize} & Slice size in our paper (in bytes).\\
+\hline
+\tt{chunkServer.ECPipe. PacketCount} & Number of slices in a block.\\
+\hline
+\tt{chunkServer.metaServer. hostname} & e.g., {\tt 192.168.0.2} \\
+\hline
+\tt{chunkServer.metaServer. port} & e.g., {\tt 30000} \\
+\hline
+\tt{chunkServer.clientPort} & Port number for the chunkserver to communicate
+with clients (e.g., 22000) \\
+\hline
+\tt{chunkServer.clusterKey} & The common cluster key. \\
+\hline
+\tt{chunkServer.chunkDir} & Full path to qfsdata. (e.g.,
+\path{~qfs/qfstest/qfsdata})\\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\msgLogWriter.\\maxLogFileSize}} & 1e6 & \\
+% \hline
+% \tt{\makecell[l]{chunkServer.\\msgLogWriter.\\maxLogFiles}} & 2 & \\
+\hline
+\tt{chunkServer.pidFile} & Full path to chunkserver.pid (e.g.,
+\path{~qfs/qfstest/qfslogs/chunkserver.pid}) \\
+\hline
+\tt{chunkServer.ECPipe. coordinatorIP} & e.g., 192.168.0.1 \\
+\hline
+\tt{chunkServer.ECPipe. localIP} &  IP address of the chunkserver itself.\\
+\hline
+\tt{chunkServer.ECPipe. degradedReadPolicy} & Only {\tt ecpipe} is supported
+now.\\
+\hline
+\tt{chunkServer.ECPipe. ECPipePolicy} & Only {\tt basic} is supported now. \\
+\hline
+\end{tabular}
+\caption{Details of the QFS chunkserver configuration file.}
+\label{tab:qfs_chunk}
+\end{table}
+
+\subsection{Start QFS}
+
+To start the metaserver, you can execute the following on the metaserver:
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt metaserver \path{~qfs/qfstest/conf/MetaServer.prp} $\backslash$
+
+        > \path{~qfs/qfstest/qfslogs/MetaServer.log}}
+    }%
+}
+\end{center}
+
+To start a chunkserver, you can execute the following on each chunkserver:
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt chunkserver \path{~qfs/qfstest/conf/ChunkServer.prp} $\backslash$
+
+        > \path{~qfs/qfstest/qfslogs/ChunkServer.log}}
+    }%
+}
+\end{center}
+
+We can create an input file using {\tt dd} (see our Hadoop-20 test).
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cptoqfs -s 192.168.0.2 -p 20000 -k /path/to/file.txt $\backslash$
+
+        > -d file.txt -S}
+    }%
+}
+\end{center}
+
+\subsection{Start ECPipe}
+
+\begin{itemize}
+
+\item config.xml
+
+Table~\ref{tab:qfs_test} shows the property settings for our QFS test.
+
+\begin{table}[!ht]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{|l|l|}
+\hline
+{\bf Property Name} & {\bf Description} \\
+\hline
+{\tt erasure.code.k} & 6 for QFS test. \\
+\hline
+{\tt erasure.code.n} & 9 for QFS test. \\
+\hline
+{\tt rs.code.config.file} & rsEncMat\_6\_9 \\
+\hline
+{\tt degraded.read.policy} & Only {\tt ecpipe} is supported now. \\
+\hline
+{\tt ecpipe.policy} & Only {\tt basic} is supported now. \\
+\hline
+{\tt file.system.type} & QFS \\
+%\hline
+%{\tt packet.skipsize} & QFS block has a header of 16384 bytes.\\
+\hline
+{\tt block.directory} & QFS block directory. \\
+\hline
+\end{tabular}
+\caption{Property settings of config.xml for our QFS test.}
+\label{tab:qfs_test}
+\end{table}
+
+\item Start ECPipe
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cd \path{~ecpipe}}
+
+    \$ {\tt python scripts/start.py}
+    }%
+}
+\end{center}
+
+\end{itemize}
+
+\subsection{Degraded Read Test}
+
+\begin{itemize}
+\item Ssh to one of the chunkserver nodes.
+\item Delete one block under data directory.
+\end{itemize}
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cpfromqfs -s 192.168.0.2 -p 20000 -k file.txt -d ./output.txt}
+    }%
+}
+\end{center}
+
+You can compare the input file with the output file.
+
+\subsection{Stop QFS and ECPipe}
+
+To stop QFS, first ssh to node2 to stop metaserver.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt killall metaserver}
+    }%
+}
+\end{center}
+
+Then ssh to node3-node11 to stop chunkserver.
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt killall chunkserver}
+    }%
+}
+\end{center}
+
+To stop ECPipe, ssh to node1:
+
+\begin{center}
+\noindent\fbox{%
+    \parbox{400pt}{%
+    \$ {\tt cd \path{~ecpipe}}
+
+    \$ {\tt python scripts/stop.py}
+    }%
+}
+\end{center}
+
+\end{document}

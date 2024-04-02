@@ -1,0 +1,15 @@
+chunkServer.ECPipe.PacketSize = 32768
+chunkServer.ECPipe.PacketCount = 32
+chunkServer.metaServer.hostname = 192.168.0.2
+chunkServer.metaServer.port = 30000
+chunkServer.clientPort = 22000
+chunkServer.clusterKey = testingCluster
+chunkServer.rackId = 0
+chunkServer.chunkDir = /home/user/qfstest/qfsdata
+chunkServer.msgLogWriter.maxLogFileSize = 1e6
+chunkServer.msgLogWriter.maxLogFiles = 2
+chunkServer.pidFile = /home/user/qfstest/qfslogs/chunkserver.pid
+chunkServer.ECPipe.coordinatorIP = 192.168.0.1
+chunkServer.ECPipe.localIP = 
+chunkServer.ECPipe.degradedReadPolicy = ecpipe
+chunkServer.ECPipe.ECPipePolicy = basic 

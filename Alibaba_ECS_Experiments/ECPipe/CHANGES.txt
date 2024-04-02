@@ -1,0 +1,16 @@
+ECPipe Change Log
+
+Release v1.1 CHANGES (June 2019)
+
+    NEW FEATURES
+    1. Multiple failure recovery is supported now for the **basic** version of ECPipe.
+	2. Rack-aware scheme is supported now for the **basic** version of ECPipe.
+
+    NEW INTEGRATIONS
+        1. ECPipe now supports running atop Hadoop-3 (version 3.1.1).
+
+    IMPROVEMENTS
+    1. We test ECPipe in ubuntu 16.04.
+	2. We compile ECPipe with g++ v5.4.0.
+
+Please refer to doc/doc.pdf for details in the new features and integrations.
