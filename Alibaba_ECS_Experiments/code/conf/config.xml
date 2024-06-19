@@ -1,7 +1,7 @@
 <setting>
 <attribute><name>erasure.code.k</name><value>10</value></attribute>
 <attribute><name>erasure.code.n</name><value>14</value></attribute>
-<attribute><name>rs.code.config.file</name><value>/root/CoRD/Alibaba_ECS_Experiments/ECPipe/conf/rsEncMat_3_4</value></attribute>
+<attribute><name>rs.code.config.file</name><value>/root/CoRD/Alibaba_ECS_Experiments/code/conf/rsEncMat_3_4</value></attribute>
 <attribute><name>packet.size</name><value>32768</value></attribute>
 <attribute><name>packet.count</name><value>32</value></attribute>
 <attribute><name>degraded.read.policy</name><value>conv</value></attribute>
@@ -13,9 +13,9 @@
 <attribute><name>ecpipe.policy</name><value>basic</value></attribute>
 <attribute><name>coordinator.address</name><value>172.29.6.35</value></attribute>
 <attribute><name>file.system.type</name><value>standalone</value></attribute>
-<attribute><name>stripe.store</name><value>/root/CoRD/Alibaba_ECS_Experiments/ECPipe/stripeStore</value></attribute>
-<attribute><name>block.directory</name><value>/root/CoRD/Alibaba_ECS_Experiments/ECPipe/standalone-test</value></attribute>
-<attribute><name>update.block.directory</name><value>/root/CoRD/Alibaba_ECS_Experiments/ECPipe/upd-data</value></attribute>
+<attribute><name>stripe.store</name><value>/root/CoRD/Alibaba_ECS_Experiments/code/stripeStore</value></attribute>
+<attribute><name>block.directory</name><value>/root/CoRD/Alibaba_ECS_Experiments/code/standalone-test</value></attribute>
+<attribute><name>update.block.directory</name><value>/root/CoRD/Alibaba_ECS_Experiments/code/upd-data</value></attribute>
 <attribute><name>trace.directory</name><value>/root/CoRD/Alibaba_ECS_Experiments/Trace</value></attribute>
 <attribute><name>trace.type</name><value>MSR</value></attribute>
 <attribute><name>helpers.address</name>
