@@ -1,0 +1,143 @@
+sudo apt-get update
+sudo apt-get install g++ cmake libtool autoconf git nasm
+
+安装 isa-l
+git clone https://github.com/01org/isa-l.git && cd isa-l && ./autogen.sh && ./configure && make && sudo make install && make test && cd ..
+-------------------------------------------------------------
+$ git clone https://github.com/01org/isa-l.git
+$ cd isa-l
+$ ./autogen.sh && ./configure && make && sudo make install
+$ make test
+
+安装java8
+sudo apt-get purge openjdk* && sudo apt-get install software-properties-common && sudo add-apt-repository  ppa:ts.sch.gr/ppa && sudo apt-get update && sudo apt-get install oracle-java8-installer && sudo apt install oracle-java8-set-default && java -version
+-------------------------------------------------------------------
+$ sudo apt-get purge openjdk*
+$ sudo apt-get install software-properties-common
+$ sudo add-apt-repository  ppa:ts.sch.gr/ppa   # 出错就跳过
+$ sudo apt-get update 
+$ sudo apt-get install oracle-java8-installer  
+$ sudo apt install oracle-java8-set-default
+
+在~/.bashrc中添加
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export PATH=$JAVA_HOME/bin:$PATH
+
+source ~/.bashrc
+
+java -version
+
+
+安装maven
+tar -zxvf apache-maven-3.5.4-bin.tar.gz && mvn help:system
+--------------------------------------------------------
+tar -zxvf apache-maven-3.5.4-bin.tar.gz
+在~/.bashrc中添加
+export MAVEN_HOME=/root/apache-maven-3.5.4
+export PATH=$MAVEN_HOME/bin:$PATH
+
+source ~/.bashrc
+
+mvn help:system
+
+安装protobuf-2.5.0
+$ tar -zxvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0 && ./configure && make && sudo make install && cd .. && sudo ldconfig && protoc --version
+---------------------------------------------------
+$ tar -zxvf protobuf-2.5.0.tar.gz
+$ cd protobuf-2.5.0
+$ ./configure && make && sudo make install
+在~/.bashrc中添加
+export PROTOC_HOME=/root/protoc-2.5.0
+export PATH=$PROTOC_HOME/bin:$PATH
+source ~/.bashrc
+sudo ldconfig
+protoc --version
+
+安装hadoop-3.1.1
+sudo apt-get -y install build-essential autoconf automake libtool cmake zlib1g-dev pkg-config libssl-dev && tar -zxvf hadoop-3.1.1-src.tar.gz && cd hadoop-3.1.1-src/ && mvn package -DskipTests -Dtar -Dmaven.javadoc.skip=true -Drequire.isal -Pdist,native -DskipShade -e
+在~/.bashrc中添加
+export HADOOP_SRC_DIR=/root/hadoop-3.1.1-src
+export HADOOP_HOME=$HADOOP_SRC_DIR/hadoop-dist/target/hadoop-3.1.1
+export PATH=$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+source ~/.bashrc
+
+
+hdfs-site.xml
+
+<configuration>
+<property><name>dfs.replication</name><value>1</value></property>
+<property><name>dfs.blocksize</name><value>65536</value></property>
+<property><name>dfs.namenode.fs-limits.min-block-size</name><value>65536</value></property>
+<property><name>dfs.namenode.datanode.registration.ip-hostname-check</name><value>false</value></property>
+<property><name>dfs.permissions.enabled</name><value>false</value></property>
+</configuration>
+
+core-site.xml
+
+<configuration>
+<property><name>fs.defaultFS</name><value>hdfs://172.17.0.2:9000</value></property>
+<property><name>hadoop.tmp.dir</name><value>/root/hadoop-3.1.1-src/hadoop-dist/target/hadoop-3.1.1</value></property>
+</configuration>
+
+hadoop-env.sh
+
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export HADOOP_HOME=/root/hadoop-3.1.1-src/hadoop-dist/target/hadoop-3.1.1
+export HDFS_NAMENODE_USER=root
+export HDFS_DATANODE_USER=root
+export HDFS_SECONDARYNAMENODE_USER=root
+export YARN_RESOURCEMANAGER_USER=root
+export YARN_NODEMANAGER_USER=root
+
+workers
+172.17.0.3
+172.17.0.4
+172.17.0.5
+172.17.0.6
+172.17.0.7
+
+
+user_ec_policies.xml
+
+<?xml version="1.0"?>
+<configuration>
+
+<layoutversion>1</layoutversion>
+
+<schemas>
+<schema id="RS-3-2-64k">
+<codec>rs</codec>
+<k>3</k>
+<m>2</m>
+</schema>
+</schemas>
+
+<policies>
+<policy>
+<schema>RS-3-2-64k</schema>
+<cellsize>65536</cellsize>
+</policy>
+</policies>
+
+</configuration>
+
+常用命令：
+hdfs namenode -format
+start-dfs.sh
+stop-dfs.sh
+hdfs dfsadmin -report | grep Hostname
+
+生成文件块
+dd if=/dev/urandom of=testfile bs=65536 count=3
+
+给hdfs3添加自定义纠删码策略
+hdfs ec -listPolicies                          # list the policies supported by HDFS
+hdfs ec -addPolicies -policyFile /root/hadoop-3.1.1-src/hadoop-dist/target/hadoop-3.1.1/etc/hadoop/user_ec_policies.xml    # add an erasure coding policy,在root目录下执行该语句
+hdfs ec -enablePolicy -policy RS-10-4-64k  # enable an erasure coding policy
+hadoop fs -mkdir /ec_test                      # create a folder named /ec_test
+hdfs ec -setPolicy -path /ec_test -policy RS-10-4-64k  # set ec policy to /ec_test
+hdfs ec -getPolicy -path /ec_test              # confirm the ec policy of /ec_test
+hadoop fs -put testfile /ec_test               # write testfile to /ec_test
+
+确认块信息
+hadoop fsck / -files -blocks -locations

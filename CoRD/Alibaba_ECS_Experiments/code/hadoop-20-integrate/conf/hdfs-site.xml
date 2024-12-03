@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property><name>ecpipe.coordinator</name><value>192.168.0.1</value></property>
+<property><name>ecpipe.packetsize</name><value>32768</value></property>
+<property><name>ecpipe.packetcnt</name><value>32</value></property>
+<property><name>ecpipe.local.addr</name><value>192.168.0.2</value></property>
+<property><name>dfs.use.inline.checksum</name><value>false</value></property>
+<property><name>use.ctdr</name><value>true</value></property>
+<property><name>num.src.node</name><value>3</value></property>
+<property><name>num.parity.node</name><value>1</value></property>
+<property><name>dfs.http.address</name><value>192.168.0.2:50070</value></property>
+<property><name>dfs.replication</name><value>1</value></property>
+<property><name>hdfs.raid.parity.initial.repl</name><value>1</value></property>
+<property><name>raid.statscollector.update.period</name><value>10000</value></property>
+<property><name>raid.policy.rescan.interval</name><value>1000000</value></property>
+<property><name>raid.mod.time.period</name><value>0</value></property>
+<property><name>dfs.safemode.threshold.pct</name><value>0</value></property>
+<property><name>raid.blockfix.classname</name><value>org.apache.hadoop.raid.LocalBlockIntegrityMonitor</value></property>
+<property><name>raid.config.file</name><value>path/to/hadoop-20/conf/raid.xml</value></property>
+<property><name>hdfs.raid.stripe.store.class</name><value>org.apache.hadoop.raid.LocalStripeStore</value></property>
+<property><name>hdfs.raid.local.stripe.dir</name><value>path/to/hadoop-20/stripeStore</value></property>
+<property><name>raid.classname</name><value>org.apache.hadoop.raid.LocalRaidNode</value></property>
+<property><name>hdfs.raid.user.dir.prefix</name><value>*user name*</value></property>
+<property><name>dfs.block.replicator.classname</name><value>org.apache.hadoop.hdfs.server.namenode.BlockPlacementPolicyECPipe</value></property>
+<property><name>dfs.block.size</name><value>1048576</value></property>
+<property><name>raid.codecs.json</name><value>[{"id" : "rs","parity_dir" : "/rs","stripe_length" : 3,"parity_length" : 1,"priority" : 100,"erasure_code" : "org.apache.hadoop.raid.JerasureCode","description" : "js code","simulate_block_fix": false,"dir_raid" : true}]</value></property>
+</configuration>

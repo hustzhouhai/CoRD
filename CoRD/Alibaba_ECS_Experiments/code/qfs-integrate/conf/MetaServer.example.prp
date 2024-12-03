@@ -1,0 +1,11 @@
+metaServer.clientPort=20000
+metaServer.chunkServerPort=30000
+metaServer.logDir=/home/user/qfstest/meta/logs
+metaServer.cpDir=/home/user/qfstest/meta/checkpoints
+metaServer.createEmptyFs = 1
+metaServer.recoveryInterval=10
+metaServer.clusterKey=testingCluster
+metaServer.msgLogWriter.logLevel = INFO
+metaServer.rootDirUser  = 1000
+metaServer.rootDirGroup = 1000
+metaServer.rootDirMode  = 0777

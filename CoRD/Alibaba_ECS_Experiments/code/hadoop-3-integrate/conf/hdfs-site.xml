@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property><name>dfs.client.use.datanode.hostname</name><value>true</value></property>
+<property><name>dfs.replication</name><value>1</value></property>
+<property><name>dfs.blocksize</name><value>1048576</value></property>
+<property><name>ecpipe.coordinator</name><value>172.17.0.2</value></property>
+<property><name>dfs.blockreport.intervalMsec</name><value>20000</value></property>
+<property><name>dfs.datanode.ec.reconstruction.stripedread.buffer.size</name><value>1048576</value></property>
+<property><name>dfs.datanode.ec.ecpipe</name><value>true</value></property>
+<property><name>ecpipe.packetsize</name><value>32768</value></property>
+<property><name>ecpipe.packetcnt</name><value>32</value></property>
+</configuration>
